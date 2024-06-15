@@ -85,10 +85,10 @@ local function clock_window()
     local hundreds_digit = math.floor(beats / 100) % 10
 
     -- grab current system time
-    cur_time = os.date(timestr)
+      result = os.date(timestr)
     
     if options.show_beats then
-      result = cur_time .. string.format("@%.0f", get_beats())
+      result = result .. '@' .. string.format("%.0f", get_beats())
     end
 
     -- check whether the hundreds digit is even
