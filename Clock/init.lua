@@ -7,6 +7,9 @@ local core_mainmenu = require("core_mainmenu")
 local clock_cfg = require("Clock.configuration")
 local optionsLoaded, options = pcall(require, "Clock.options")
 local optionsFileName = "addons/Clock/options.lua"
+local lib_helpers = require("solylib.helpers")
+local lib_items_cfg = require("solylib.items.items_configuration")
+
 
 if optionsLoaded then
     -- If options loaded, make sure we have all those we need
@@ -71,19 +74,35 @@ end
 
 -- Do all the stuff
 local function clock_window()
+  imgui.PushStyleColor("WindowBg", 0.0, 0.0, 0.0, 0.0)
+
   -- draw the window
   if options.enable then
     imgui.Begin("Clock", nil, {"NoTitleBar", "AlwaysAutoResize"})
     
+    local result
+    local beats = get_beats()
+    local hundreds_digit = math.floor(beats / 100) % 10
+
     -- grab current system time
     cur_time = os.date(timestr)
-    imgui.Text(cur_time)
     
     if options.show_beats then
-      imgui.Text(string.format("@%.0f .beats", get_beats()))
+      result = cur_time .. string.format("@%.0f", get_beats())
     end
+
+    -- check whether the hundreds digit is even
+    if hundreds_digit % 2 == 0 then
+        lib_helpers.TextC(false, lib_items_cfg.green, result)
+    else
+        lib_helpers.TextC(false, lib_items_cfg.white, result)
+    end
+    
     imgui.End()
   end
+
+  imgui.PopStyleColor()
+
 end
 
 local function present()
